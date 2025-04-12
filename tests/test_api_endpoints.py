@@ -68,7 +68,8 @@ def test_unsupported_endpoints_post(test_client, endpoint):
 
 def test_unsupported_endpoint_delete(test_client):
     """Test unsupported DELETE endpoint."""
-    response = test_client.delete(
+    response = test_client.request(
+        "DELETE",
         "/api/delete",
         json={"model": "test"}
     )
