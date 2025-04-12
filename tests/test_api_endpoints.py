@@ -85,8 +85,8 @@ def test_generate_endpoint(mock_completion, test_client):
     mock_response.created = datetime.now().timestamp()
     mock_response.choices = [MagicMock()]
     mock_response.choices[0].message.content = "This is a test response."
-    mock_completion.return_value = mock_response
-
+    mock_acompletion.return_value = mock_response # Use renamed mock arg
+    
     # Make a request to generate endpoint
     request_data = {
         "model": "llama3",
@@ -106,8 +106,8 @@ def test_generate_endpoint(mock_completion, test_client):
     assert response.json()["done"] is True
 
     # Verify litellm was called correctly
-    mock_completion.assert_called_once()
-    args, kwargs = mock_completion.call_args
+    mock_acompletion.assert_called_once() # Use renamed mock arg
+    args, kwargs = mock_acompletion.call_args # Use renamed mock arg
     assert kwargs["model"] == "ollama/llama3"
     assert len(kwargs["messages"]) == 2
     assert kwargs["messages"][0]["role"] == "system"
