@@ -12,7 +12,8 @@ from app.config import MODEL_MAPPING, LITELLM_CONFIG
 from app.models import (
     GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
     ModelInfo, ListTagsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
-    ShowModelResponse, ShowModelRequest, PsResponse, CreateModelRequest # Added VersionResponse and CreateModelRequest
+    ShowModelResponse, ShowModelRequest, PsResponse, CreateModelRequest, # Added VersionResponse and CreateModelRequest
+    CopyModelRequest, DeleteModelRequest, PullModelRequest, PushModelRequest # Added stub request models
 )
 
 # Load environment variables
