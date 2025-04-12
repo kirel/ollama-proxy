@@ -1,11 +1,8 @@
 """
 Tests for the streaming functionality.
 """
-import pytest
 import json
 from unittest.mock import MagicMock, patch
-import asyncio
-from fastapi.testclient import TestClient
 
 
 @patch('app.main.litellm.completion')
