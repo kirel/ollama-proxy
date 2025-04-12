@@ -1,0 +1,18 @@
+[project]
+name = ""
+version = "0.0.1"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.23.2",
+    "litellm>=1.40.14",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "httpx>=0.25.0",
+    "starlette>=0.31.1",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.1",
+    "ollama>=0.1.9",
+]
+
+[tool.uv]
+package = false
