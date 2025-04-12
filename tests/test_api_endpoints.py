@@ -33,14 +33,15 @@ def test_models_endpoint(test_client):
 
 
 def test_show_model_endpoint(test_client):
-    """Test the show model endpoint."""
+    """Test the show model endpoint (POST)."""
     model_name = "llama3"
-    response = test_client.get(f"/api/show?model={model_name}")
+    request_data = {"model": model_name}
+    response = test_client.post("/api/show", json=request_data) # Changed to POST and use JSON body
     assert response.status_code == 200
     assert "license" in response.json()
     assert "modelfile" in response.json()
     assert "details" in response.json()
-    assert model_name in response.json()["modelfile"]
+    assert model_name in response.json()["modelfile"] # Check if original name is in modelfile placeholder
 
 
 def test_ps_endpoint(test_client): # Renamed test function

@@ -11,7 +11,9 @@ from app.config import MODEL_MAPPING, LITELLM_CONFIG
 from app.models import (
     GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
     ModelInfo, ListTagsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
-    ShowModelResponse, PsResponse # Added VersionResponse
+    ShowModelResponse, ShowModelRequest, PsResponse, PsModelInfo, # Added ShowModelRequest, PsResponse, PsModelInfo
+    CreateModelRequest, CopyModelRequest, DeleteModelRequest, PullModelRequest, PushModelRequest, # Added stub models
+    VersionResponse # Added VersionResponse
 )
 
 # Load environment variables
@@ -337,20 +339,21 @@ async def generate_embeddings(request: EmbeddingRequest):
         logger.error(f"Error generating embeddings: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Show model information
-@app.get("/api/show", response_model=ShowModelResponse)
-async def show_model(model: str):
-    """Show model information"""
+# Show model information (Ollama spec uses POST)
+@app.post("/api/show", response_model=ShowModelResponse) # Changed method to POST
+async def show_model(request: ShowModelRequest): # Changed signature to use request body
+    """Show model information (Ollama's POST /api/show endpoint)"""
     try:
         # Map the model name to LiteLLM format
-        litellm_model = map_to_litellm_model(model)
-        logger.info(f"Showing information for model: {litellm_model}")
-        
+        litellm_model = map_to_litellm_model(request.model) # Get model from request body
+        logger.info(f"Showing information for model: {litellm_model} (verbose={request.verbose})")
+
         # Get the model family (assuming format is "family:version")
-        family = model.split(":")[0] if ":" in model else model
-        
+        family = request.model.split(":")[0] if ":" in request.model else request.model
+
         # Return placeholder model information
-        # In a real implementation, we would get this from LiteLLM
+        # In a real implementation, we would get this from LiteLLM or other source
+        # The 'verbose' parameter should ideally return more detailed info if True
         return ShowModelResponse(
             license="MIT",
             modelfile=f"FROM {model}\n",

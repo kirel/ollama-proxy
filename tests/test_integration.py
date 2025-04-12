@@ -103,8 +103,8 @@ def test_embeddings(ollama_client):
 
 
 def test_show_model(ollama_client):
-    """Test that the client can show model details through our proxy."""
-    response = ollama_client.show("llama3")
+    """Test that the client can show model details through our proxy (using POST)."""
+    response = ollama_client.show("llama3") # ollama client uses POST correctly
     assert "modelfile" in response
     assert "parameters" in response
     assert "template" in response
