@@ -1,14 +1,13 @@
-from fastapi import FastAPI, Request, Response, HTTPException, Depends
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import litellm
 import json
 import logging
-from typing import Optional, List, Dict, Any, Union
-import os
+from typing import List, Dict
 import uvicorn
 from dotenv import load_dotenv
-from app.config import MODEL_MAPPING, LITELLM_CONFIG, DEFAULT_PORT, DEFAULT_HOST, DEFAULT_LOG_LEVEL
+from app.config import MODEL_MAPPING, LITELLM_CONFIG
 from app.models import (
     GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
     ModelInfo, ListModelsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse,
