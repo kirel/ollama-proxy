@@ -297,24 +297,35 @@ async def tags():
     # Placeholder - implement as needed
     return {"models": []}
 
-# Embeddings endpoint
-@app.post("/api/embeddings", response_model=EmbeddingResponse)
+# Embeddings endpoint (Ollama spec uses /api/embed)
+@app.post("/api/embed", response_model=EmbeddingResponse) # Changed path
 async def generate_embeddings(request: EmbeddingRequest):
-    """Generate embeddings for text"""
+    """Generate embeddings for text (Ollama's /api/embed endpoint)"""
     try:
         # Map the model name to LiteLLM format
         litellm_model = map_to_litellm_model(request.model)
         logger.info(f"Generating embeddings with model: {litellm_model}")
-        
+
+        # Prepare input for LiteLLM (always expects a list)
+        input_list = [request.input] if isinstance(request.input, str) else request.input
+
         # Generate embeddings using LiteLLM
         response = litellm.embedding(
             model=litellm_model,
-            input=request.prompt
+            input=input_list, # Use input_list
+            # Pass other options if needed: request.options, request.truncate, request.keep_alive
         )
-        
+
+        # Extract embeddings from the response
+        embeddings_list = [item.embedding for item in response.data]
+
         # Format response in Ollama format
         return EmbeddingResponse(
-            embedding=response.data[0].embedding
+            model=request.model, # Return original model name requested
+            embeddings=embeddings_list, # Use correct field name
+            # Populate duration/count fields if available from response.usage
+            prompt_eval_count=response.usage.prompt_tokens if hasattr(response, 'usage') else None,
+            # total_duration and load_duration are harder to get accurately here
         )
     except Exception as e:
         logger.error(f"Error generating embeddings: {str(e)}")
