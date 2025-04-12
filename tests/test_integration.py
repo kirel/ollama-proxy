@@ -90,8 +90,10 @@ def test_chat_with_history(ollama_client):
         {"role": "assistant", "content": "Hello John! How can I help you today?"},
         {"role": "user", "content": "What's my name?"}
     ]
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
     response = ollama_client.chat(
-        model="llama3",
+        model=test_model,
         messages=messages,
         stream=False # Explicitly disable streaming
     )
