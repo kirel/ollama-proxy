@@ -30,7 +30,7 @@ A drop-in replacement for the Ollama API that uses LiteLLM in the backend to rou
    ```bash
    uv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   uv pip install -r requirements.txt # ai! should be uv 
+   uv install -r requirements.txt
    ```
 
 3. Create a `.env` file from the template:
