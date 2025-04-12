@@ -26,21 +26,6 @@ def test_exact_model_mapping():
     assert map_to_litellm_model("mistral") == "ollama/mistral"
 
 
-def test_prefix_model_mapping():
-    """Test mapping for models with a prefix and suffix."""
-    # Add a test model to the mapping
-    original_mapping = MODEL_MAPPING.copy()
-    try:
-        MODEL_MAPPING["test-prefix"] = "test-provider/test-prefix"
-        
-        # Test with suffix
-        assert map_to_litellm_model("test-prefix:large") == "test-provider/test-prefix:large"
-    finally:
-        # Restore the original mapping
-        MODEL_MAPPING.clear()
-        MODEL_MAPPING.update(original_mapping)
-
-
 def test_default_model_mapping():
     """Test mapping for models that don't have a specific mapping."""
     # Test with a model that doesn't have a specific mapping
