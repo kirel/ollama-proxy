@@ -60,7 +60,8 @@ def test_ps_endpoint(test_client): # Renamed test function
 ])
 def test_unsupported_endpoints_post(test_client, endpoint):
     """Test unsupported POST endpoints."""
-    response = test_client.post(endpoint, json={"model": "test"})
+    # Use 'name' field as expected by the updated Pydantic models
+    response = test_client.post(endpoint, json={"name": "test"})
     assert response.status_code == 501
     assert "detail" in response.json()
 
@@ -71,7 +72,7 @@ def test_unsupported_endpoint_delete(test_client):
     response = test_client.request(
         "DELETE",
         "/api/delete",
-        json={"model": "test"}
+        json={"name": "test"} # Use 'name' field
     )
     assert response.status_code == 501
     assert "detail" in response.json()

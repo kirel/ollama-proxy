@@ -196,10 +196,12 @@ def test_unsupported_endpoints(ollama_client):
     # Test create model (should fail with 501 from the proxy)
     modelfile_content = "FROM qwen2:0.5b\nSYSTEM You are a helpful assistant."
     with pytest.raises(Exception) as excinfo:
-        # Try passing model name and modelfile content positionally
-        ollama_client.create("test-model", modelfile_content)
+        # Pass model name using 'name=' keyword arg, and modelfile content positionally
+        # This seems to be how the client expects it based on Ollama API spec
+        ollama_client.create(name="test-model", modelfile=modelfile_content)
     # Check for the proxy's 501 error OR the client's ResponseError containing 501
-    # The client should now attempt the request, and the proxy should return 501.
+    # The client should now attempt the request, FastAPI should validate against CreateModelRequest,
+    # and the proxy stub should return 501.
     assert "501" in str(excinfo.value) or "Creating models from Modelfiles is not supported" in str(excinfo.value)
 
     # Test pull model (should fail with 501)

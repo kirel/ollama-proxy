@@ -157,7 +157,7 @@ class PsResponse(BaseModel):
 
 class CreateModelRequest(BaseModel):
     """Request model for POST /api/create"""
-    model: str
+    name: str # Changed from 'model' to 'name' to match Ollama API
     path: Optional[str] = None # Path to Modelfile (if used locally, not via API body)
     modelfile: Optional[str] = None # Content of the Modelfile
     stream: Optional[bool] = False
@@ -173,19 +173,19 @@ class CopyModelRequest(BaseModel):
 
 class DeleteModelRequest(BaseModel):
     """Request model for DELETE /api/delete"""
-    model: str
+    name: str # Changed from 'model' to 'name' to match Ollama API
 
 
 class PullModelRequest(BaseModel):
     """Request model for POST /api/pull"""
-    model: str
+    name: str # Changed from 'model' to 'name' to match Ollama API
     insecure: Optional[bool] = False
     stream: Optional[bool] = False
 
 
 class PushModelRequest(BaseModel):
     """Request model for POST /api/push"""
-    model: str
+    name: str # Changed from 'model' to 'name' to match Ollama API
     insecure: Optional[bool] = False
     stream: Optional[bool] = False
 

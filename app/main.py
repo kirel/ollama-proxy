@@ -509,9 +509,18 @@ async def create_model(request_data: CreateModelRequest): # Changed signature to
         logger.error(f"Error in create model endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+from app.models import (
+    GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
+    ModelInfo, ListTagsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
+    ShowModelResponse, ShowModelRequest, PsResponse, CreateModelRequest, # Added VersionResponse and CreateModelRequest
+    CopyModelRequest, DeleteModelRequest, PullModelRequest, PushModelRequest # Added stub request models
+)
+
+# ... (rest of imports and code) ...
+
 # Copy model stub
 @app.post("/api/copy")
-async def copy_model(request: Request):
+async def copy_model(request_data: CopyModelRequest): # Use specific model
     """Copy a model"""
     try:
         # This functionality is Ollama-specific and not supported by LiteLLM
@@ -527,7 +536,7 @@ async def copy_model(request: Request):
 
 # Delete model stub
 @app.delete("/api/delete")
-async def delete_model(request: Request):
+async def delete_model(request_data: DeleteModelRequest): # Use specific model
     """Delete a model"""
     try:
         # This functionality is Ollama-specific and not supported by LiteLLM
@@ -543,7 +552,7 @@ async def delete_model(request: Request):
 
 # Pull model stub
 @app.post("/api/pull")
-async def pull_model(request: Request):
+async def pull_model(request_data: PullModelRequest): # Use specific model
     """Pull a model from a registry"""
     try:
         # This functionality is Ollama-specific and not supported by LiteLLM
@@ -559,7 +568,7 @@ async def pull_model(request: Request):
 
 # Push model stub
 @app.post("/api/push")
-async def push_model(request: Request):
+async def push_model(request_data: PushModelRequest): # Use specific model
     """Push a model to a registry"""
     try:
         # This functionality is Ollama-specific and not supported by LiteLLM
