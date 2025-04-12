@@ -186,4 +186,5 @@ def test_embed_endpoint(mock_embedding, test_client): # Renamed test function
     mock_embedding.assert_called_once()
     args, kwargs = mock_embedding.call_args
     assert kwargs["model"] == "ollama/mxbai-embed-large"
-    assert kwargs["input"] == "Hello, world!"
+    # LiteLLM embedding expects a list, even for single input
+    assert kwargs["input"] == ["Hello, world!"]
