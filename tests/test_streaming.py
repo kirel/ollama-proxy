@@ -52,27 +52,43 @@ def test_generate_streaming(mock_completion, test_client):
     
     # Parse the streaming response
     chunks = list(response.iter_lines())
-    assert len(chunks) >= 3  # We should have at least 3 chunks plus a final done message
-    
+    assert len(chunks) >= 4  # 3 content chunks + 1 final done message
+
     # Verify the content of each chunk
     all_content = ""
-    for i, chunk in enumerate(chunks):
-        if not chunk:  # Skip empty lines
-            continue
-        
-        data = json.loads(chunk)
-        if "done" in data and data["done"] is True:
-            # This is the final chunk
-            continue
-        
-        assert "model" in data
-        assert "response" in data
-        assert "done" in data
-        assert data["done"] is False
-        all_content += data["response"]
-    
+    final_chunk_data = None
+    intermediate_chunks = []
+    for chunk_str in chunks:
+        if not chunk_str: continue # Skip potential empty lines
+
+        data = json.loads(chunk_str)
+        if data.get("done") is True:
+            final_chunk_data = data
+        else:
+            intermediate_chunks.append(data)
+            assert "model" in data
+            assert "created_at" in data
+            assert "response" in data
+            assert "done" in data and data["done"] is False
+            all_content += data["response"]
+
+    # Check intermediate chunks
+    assert len(intermediate_chunks) == 3
+    assert intermediate_chunks[0]["response"] == "Hello"
+    assert intermediate_chunks[1]["response"] == " world"
+    assert intermediate_chunks[2]["response"] == "!"
+
     # Check that we received the complete message
-    assert "Hello world!" in all_content
+    assert all_content == "Hello world!"
+
+    # Check the final chunk structure (as defined in stream_generate_generator)
+    assert final_chunk_data is not None
+    assert final_chunk_data["done"] is True
+    assert "model" in final_chunk_data
+    assert "created_at" in final_chunk_data
+    assert "response" in final_chunk_data and final_chunk_data["response"] == ""
+    assert "context" in final_chunk_data # Check for placeholder fields
+    assert "total_duration" in final_chunk_data
 
 
 @patch('app.main.litellm.completion')
