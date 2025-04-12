@@ -115,15 +115,15 @@ def test_generate_endpoint(mock_acompletion, test_client): # Rename mock arg
     assert kwargs["messages"][1]["content"] == "Tell me about Python."
 
 
-@patch('app.main.litellm.completion')
-def test_chat_endpoint(mock_completion, test_client):
+@patch('app.main.litellm.acompletion') # Target acompletion
+def test_chat_endpoint(mock_acompletion, test_client): # Rename mock arg
     """Test the chat endpoint."""
     # Mock litellm completion response
     mock_response = MagicMock()
     mock_response.created = datetime.now().timestamp()
     mock_response.choices = [MagicMock()]
     mock_response.choices[0].message.content = "I'm doing well, how are you?"
-    mock_completion.return_value = mock_response
+    mock_acompletion.return_value = mock_response # Use renamed mock arg
 
     # Make a request to chat endpoint
     request_data = {
@@ -146,8 +146,8 @@ def test_chat_endpoint(mock_completion, test_client):
     assert response.json()["done"] is True
 
     # Verify litellm was called correctly
-    mock_completion.assert_called_once()
-    args, kwargs = mock_completion.call_args
+    mock_acompletion.assert_called_once() # Use renamed mock arg
+    args, kwargs = mock_acompletion.call_args # Use renamed mock arg
     assert kwargs["model"] == "ollama/llama3"
     assert len(kwargs["messages"]) == 1
     assert kwargs["messages"][0]["role"] == "user"

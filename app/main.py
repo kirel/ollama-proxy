@@ -312,7 +312,7 @@ async def chat(request: ChatRequest):
                 media_type="text/event-stream"
             )
         # Non-streaming response
-        response = litellm.completion(
+        response = await litellm.acompletion( # Use acompletion
             model=model,
             messages=messages,
             **params
