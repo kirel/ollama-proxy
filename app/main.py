@@ -12,7 +12,7 @@ from app.config import MODEL_MAPPING, LITELLM_CONFIG
 from app.models import (
     GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
     ModelInfo, ListTagsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
-    ShowModelResponse, ShowModelRequest, PsResponse # Added VersionResponse
+    ShowModelResponse, ShowModelRequest, PsResponse, CreateModelRequest # Added VersionResponse and CreateModelRequest
 )
 
 # Load environment variables
@@ -494,10 +494,11 @@ async def ps(): # Renamed function
 
 # Create model stub
 @app.post("/api/create")
-async def create_model(request: Request):
+async def create_model(request_data: CreateModelRequest): # Changed signature to use Pydantic model
     """Create a model from a Modelfile"""
     try:
         # This functionality is Ollama-specific and not supported by LiteLLM
+        # We don't need to use request_data, just acknowledge it for routing.
         error_message = "Creating models from Modelfiles is not supported in this proxy implementation"
         logger.warning(error_message)
         # Return 501 Not Implemented with informative message
