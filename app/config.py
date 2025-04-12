@@ -16,7 +16,9 @@ MODEL_MAPPING = {
     "claude-3-opus": "anthropic/claude-3-opus-20240229",
     "claude-3-sonnet": "anthropic/claude-3-sonnet-20240229",
     "claude-3-haiku": "anthropic/claude-3-haiku-20240307",
-    
+    "claude-3.5": "anthropic/claude-3.5-sonnet-20240620", # Added mapping for 3.5
+    "anthropic/claude-3.5": "anthropic/claude-3.5-sonnet-20240620", # Added mapping for namespaced 3.5
+
     # Google model mappings
     "gemini-pro": "google/gemini-pro",
     "gemini-ultra": "google/gemini-1.5-pro",
