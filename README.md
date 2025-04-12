@@ -1,4 +1,4 @@
-# Ollama API Proxy with LiteLLM
+# Ollama API Proxy with LiteLLM # ai! update to use uv 
 
 A drop-in replacement for the Ollama API that uses LiteLLM in the backend to route requests to various LLM providers (OpenAI, Anthropic, etc.).
 
