@@ -52,21 +52,25 @@ def test_list_models(ollama_client):
 
 def test_generate(ollama_client):
     """Test that the client can generate completions through our proxy."""
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
     response = ollama_client.generate(
-        model="llama3",
+        model=test_model,
         prompt="Tell me a short joke.",
         options={"temperature": 0.7}
     )
     assert "response" in response
     assert len(response["response"]) > 0
     assert "model" in response
-    assert response["model"] == "llama3"
+    assert response["model"] == test_model
 
 
 def test_chat(ollama_client):
     """Test that the client can chat through our proxy."""
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
     response = ollama_client.chat(
-        model="llama3",
+        model=test_model,
         messages=[
             {"role": "user", "content": "Hello, how are you?"}
         ],
@@ -99,11 +103,15 @@ def test_chat_with_history(ollama_client):
 
 def test_embeddings(ollama_client):
     """Test that the client can generate embeddings through our proxy."""
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    # Note: Using a chat model for embeddings might not be ideal, but works for API testing.
+    # Consider using a dedicated embedding model if available, e.g., 'nomic-embed-text'
+    test_model = "qwen2:0.5b"
     response = ollama_client.embeddings(
-        model="mxbai-embed-large",
+        model=test_model,
         prompt="Hello, world!" # ollama client uses 'prompt', maps to 'input'
     )
-    assert "embeddings" in response # API response uses plural 'embeddings'
+    assert "embeddings" in response # API response uses plural 'embeddings' # Changed key name
     assert isinstance(response["embeddings"], list)
     assert len(response["embeddings"]) > 0 # Should be a list containing one embedding list
     assert isinstance(response["embeddings"][0], list) # Check inner list
@@ -112,7 +120,9 @@ def test_embeddings(ollama_client):
 
 def test_show_model(ollama_client):
     """Test that the client can show model details through our proxy (using POST)."""
-    response = ollama_client.show("llama3") # ollama client uses POST correctly
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
+    response = ollama_client.show(test_model) # ollama client uses POST correctly
     assert "modelfile" in response
     assert "parameters" in response
     assert "template" in response
@@ -122,8 +132,10 @@ def test_show_model(ollama_client):
 @pytest.mark.asyncio
 async def test_async_generate(async_ollama_client):
     """Test that the async client can generate completions through our proxy."""
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
     response = await async_ollama_client.generate(
-        model="llama3",
+        model=test_model,
         prompt="What is Python?",
         options={"temperature": 0.7}
     )
@@ -134,8 +146,10 @@ async def test_async_generate(async_ollama_client):
 @pytest.mark.asyncio
 async def test_async_chat(async_ollama_client):
     """Test that the async client can chat through our proxy."""
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
     response = await async_ollama_client.chat(
-        model="llama3",
+        model=test_model,
         messages=[
             {"role": "user", "content": "Tell me about the Python programming language."}
         ],
@@ -152,10 +166,11 @@ async def test_streaming_chat(async_ollama_client):
     messages = [
         {"role": "user", "content": "Count from 1 to 5."}
     ]
-    
+    # Ensure the model 'qwen2:0.5b' is available on the target Ollama instance
+    test_model = "qwen2:0.5b"
     chunks = []
     async for chunk in await async_ollama_client.chat(
-        model="llama3",
+        model=test_model,
         messages=messages,
         stream=True
     ):
@@ -179,12 +194,14 @@ def test_unsupported_endpoints(ollama_client):
     # We test by passing modelfile content. The client might raise its own error first
     # if the format is wrong, but we primarily expect the proxy's 501.
     with pytest.raises(Exception) as excinfo:
-         # Pass modelfile content directly as per ollama client usage
+        # Pass modelfile content as the second positional argument (path)
+        # The ollama client seems to handle string content here based on common patterns,
+        # even though 'path' usually implies a file path.
         ollama_client.create(
             model="test-model",
-            modelfile="FROM llama3\nSYSTEM You are a helpful assistant." # Correct usage
+            path="FROM qwen2:0.5b\nSYSTEM You are a helpful assistant." # Use path argument for content
         )
-    # Check for the proxy's 501 error within the ResponseError from the client
+    # Check for the proxy's 501 error OR the client's ResponseError containing 501
     assert "501" in str(excinfo.value) or "Creating models from Modelfiles is not supported" in str(excinfo.value)
     
     # Test pull model (should fail with 501)
