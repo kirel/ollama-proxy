@@ -88,26 +88,97 @@ def convert_chat_to_litellm_format(messages: List[ChatMessage]) -> List[Dict[str
     """Convert Ollama chat messages to LiteLLM format."""
     return [{"role": msg.role, "content": msg.content} for msg in messages]
 
-async def stream_generator(stream):
-    """Generate streaming responses in Ollama format."""
+async def stream_generate_generator(stream):
+    """Generate streaming responses for /api/generate in Ollama format."""
+    final_model = None
+    final_created_at = None
     async for chunk in stream:
         if hasattr(chunk, "choices") and len(chunk.choices) > 0:
             choice = chunk.choices[0]
+            final_model = chunk.model # Store model for final chunk
+            final_created_at = datetime.fromtimestamp(chunk.created).isoformat() + "Z" # Store and format timestamp
+
             if hasattr(choice, "delta") and hasattr(choice.delta, "content"):
                 content = choice.delta.content
                 if content:
-                    # Format in Ollama's response format
+                    # Format intermediate chunk for /api/generate
                     yield json.dumps({
-                        "model": chunk.model,
-                        "created_at": chunk.created,
+                        "model": final_model,
+                        "created_at": final_created_at,
                         "response": content,
                         "done": False
                     }) + "\n"
-    
-    # Final message indicating completion
-    yield json.dumps({
-        "done": True
-    }) + "\n"
+
+    # Final message indicating completion for /api/generate
+    # Mimics Ollama's final streaming chunk structure
+    if final_model and final_created_at:
+        yield json.dumps({
+            "model": final_model,
+            "created_at": final_created_at,
+            "response": "", # Empty response in final chunk
+            "done": True,
+            # Add other fields if available from LiteLLM usage info later
+            "context": [], # Placeholder
+            "total_duration": 0, # Placeholder
+            "load_duration": 0, # Placeholder
+            "prompt_eval_count": 0, # Placeholder
+            "prompt_eval_duration": 0, # Placeholder
+            "eval_count": 0, # Placeholder
+            "eval_duration": 0 # Placeholder
+        }) + "\n"
+    else:
+         # Fallback if stream was empty or malformed
+         yield json.dumps({"done": True}) + "\n"
+
+
+async def stream_chat_generator(stream):
+    """Generate streaming responses for /api/chat in Ollama format."""
+    final_model = None
+    final_created_at = None
+    async for chunk in stream:
+        if hasattr(chunk, "choices") and len(chunk.choices) > 0:
+            choice = chunk.choices[0]
+            final_model = chunk.model # Store model for final chunk
+            final_created_at = datetime.fromtimestamp(chunk.created).isoformat() + "Z" # Store and format timestamp
+
+            if hasattr(choice, "delta") and hasattr(choice.delta, "content"):
+                content = choice.delta.content
+                if content:
+                    # Format intermediate chunk for /api/chat
+                    yield json.dumps({
+                        "model": final_model,
+                        "created_at": final_created_at,
+                        "message": {
+                            "role": "assistant", # Assuming assistant role for delta content
+                            "content": content
+                        },
+                        "done": False
+                    }) + "\n"
+
+    # Final message indicating completion for /api/chat
+    # Mimics Ollama's final streaming chunk structure
+    if final_model and final_created_at:
+        yield json.dumps({
+            "model": final_model,
+            "created_at": final_created_at,
+            "message": { # Empty message content in final chunk
+                "role": "assistant",
+                "content": ""
+            },
+            "done": True,
+            "done_reason": "stop", # Default reason
+            # Add other fields if available from LiteLLM usage info later
+            "total_duration": 0, # Placeholder
+            "load_duration": 0, # Placeholder
+            "prompt_eval_count": 0, # Placeholder
+            "prompt_eval_duration": 0, # Placeholder
+            "eval_count": 0, # Placeholder
+            "eval_duration": 0 # Placeholder
+        }) + "\n"
+    else:
+        # Fallback if stream was empty or malformed
+        yield json.dumps({"done": True}) + "\n"
+
 
 # API Routes
 @app.get("/")
@@ -163,10 +234,9 @@ async def generate(request: GenerateRequest):
                 **params
             )
             return StreamingResponse(
-                stream_generator(stream),
+                stream_generate_generator(stream), # Use the generate-specific generator
                 media_type="text/event-stream"
             )
-        
         # Non-streaming response
         response = litellm.completion(
             model=model,
@@ -238,10 +308,9 @@ async def chat(request: ChatRequest):
                 **params
             )
             return StreamingResponse(
-                stream_generator(stream),
+                stream_chat_generator(stream), # Use the chat-specific generator
                 media_type="text/event-stream"
             )
-        
         # Non-streaming response
         response = litellm.completion(
             model=model,
