@@ -51,7 +51,7 @@ def test_generate_streaming(mock_completion, test_client):
     
     # Check that the response is a streaming response
     assert response.status_code == 200
-    assert response.headers["content-type"] == "text/event-stream"
+    assert response.headers["content-type"] == "text/event-stream; charset=utf-8"
     
     # Parse the streaming response
     chunks = list(response.iter_lines())
@@ -123,7 +123,7 @@ def test_chat_streaming(mock_completion, test_client):
     
     # Check that the response is a streaming response
     assert response.status_code == 200
-    assert response.headers["content-type"] == "text/event-stream"
+    assert response.headers["content-type"] == "text/event-stream; charset=utf-8"
     
     # Parse the streaming response
     chunks = list(response.iter_lines())
