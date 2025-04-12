@@ -1,7 +1,6 @@
 """
 Test the main API endpoints of the Ollama API proxy.
 """
-import json
 import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime
@@ -66,7 +65,6 @@ def test_unsupported_endpoints_post(test_client, endpoint):
     assert "detail" in response.json()
 
 
-import json
 
 def test_unsupported_endpoint_delete(test_client):
     """Test unsupported DELETE endpoint."""
