@@ -126,10 +126,23 @@ async def generate(request: GenerateRequest):
     try:
         model = map_to_litellm_model(request.model)
         logger.info(f"Generating completion with model: {model}")
-        
+
+        # Handle Ollama's model loading behavior when prompt is empty
+        if not request.prompt:
+            logger.info(f"Empty prompt received for model {request.model}. Treating as load request.")
+            # Simulate model load response based on Ollama spec
+            created_time = datetime.now().isoformat() + "Z"
+            return GenerateResponse(
+                model=request.model,
+                created_at=created_time,
+                response="",
+                done=True,
+                done_reason="load" # Indicate it was a load operation
+            )
+
         messages = [{"role": "system", "content": request.system}] if request.system else []
         messages.append({"role": "user", "content": request.prompt})
-        
+
         # Set parameters based on request options
         params = {}
         if request.options:
@@ -190,9 +203,22 @@ async def chat(request: ChatRequest):
     try:
         model = map_to_litellm_model(request.model)
         logger.info(f"Generating chat completion with model: {model}")
-        
+
+        # Handle Ollama's model loading behavior when messages list is empty
+        if not request.messages:
+            logger.info(f"Empty messages list received for model {request.model}. Treating as load request.")
+            # Simulate model load response based on Ollama spec
+            created_time = datetime.now().isoformat() + "Z"
+            return ChatResponse(
+                model=request.model,
+                created_at=created_time,
+                message=ChatMessage(role="assistant", content=""), # Empty assistant message
+                done=True,
+                done_reason="load" # Indicate it was a load operation
+            )
+
         messages = convert_chat_to_litellm_format(request.messages)
-        
+
         # Set parameters based on request options
         params = {}
         if request.options:
