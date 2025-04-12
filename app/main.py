@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import litellm
@@ -511,7 +511,7 @@ async def create_model(request_data: CreateModelRequest): # Changed signature to
 
 from app.models import (
     GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
-    ModelInfo, ListTagsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
+    ListTagsResponse, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
     ShowModelResponse, ShowModelRequest, PsResponse, CreateModelRequest, # Added VersionResponse and CreateModelRequest
     CopyModelRequest, DeleteModelRequest, PullModelRequest, PushModelRequest # Added stub request models
 )
