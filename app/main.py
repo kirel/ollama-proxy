@@ -64,17 +64,29 @@ configure_litellm()
 # Helper functions
 def map_to_litellm_model(model_name: str) -> str:
     """Map Ollama model names to LiteLLM compatible model names."""
-    # If the model name already contains a '/', assume it's a direct LiteLLM model string
+    # Check exact match in mapping FIRST
+    if model_name in MODEL_MAPPING:
+        mapped_name = MODEL_MAPPING[model_name]
+        # Handle the default lambda case separately
+        if callable(mapped_name):
+             # If it's the default lambda, apply it only if no '/' is present
+             if "/" not in model_name:
+                 result = mapped_name(model_name)
+                 logger.info(f"Applied default mapping for '{model_name}' to '{result}'")
+                 return result
+             # Otherwise, fall through to check for '/' or use default mapping below
+        else:
+            # It's a direct string mapping
+            logger.info(f"Mapped model '{model_name}' to '{mapped_name}'")
+            return mapped_name
+
+    # If no exact match, check if the model name already contains a '/', assume it's a direct LiteLLM model string
     if "/" in model_name:
-        logger.info(f"Using model name directly: {model_name}")
+        logger.info(f"Using model name directly (no exact mapping found): {model_name}")
         return model_name
 
-    # Check exact match in mapping
-    if model_name in MODEL_MAPPING:
-        logger.info(f"Mapped model '{model_name}' to '{MODEL_MAPPING[model_name]}'")
-        return MODEL_MAPPING[model_name]
-
     # Check if there's a prefix match (e.g., llama3:8b -> ollama/llama3:8b)
+    # This might be less useful if prefixes are explicitly in MODEL_MAPPING
     # Note: This logic might be less relevant now if MODEL_MAPPING covers prefixes explicitly
     for prefix, litellm_name in MODEL_MAPPING.items():
         if model_name.startswith(prefix + ":"):
