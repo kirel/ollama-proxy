@@ -22,11 +22,11 @@ A drop-in replacement for the Ollama API that uses LiteLLM in the backend to rou
    cd ollama-proxy
    ```
 
-2. Create a virtual environment and install dependencies using uv:
+2. Create a virtual environment and install dependencies:
    ```bash
-   uv venv
+   python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   uv pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 
 3. Create a `.env` file from the template:
