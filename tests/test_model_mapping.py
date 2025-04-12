@@ -8,7 +8,6 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.main import map_to_litellm_model
-from app.config import MODEL_MAPPING
 
 
 def test_exact_model_mapping():
