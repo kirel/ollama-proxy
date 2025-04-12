@@ -1,4 +1,4 @@
-# Ollama API Proxy with LiteLLM # ai! update to use uv
+# Ollama API Proxy with LiteLLM
 
 A drop-in replacement for the Ollama API that uses LiteLLM in the backend to route requests to various LLM providers (OpenAI, Anthropic, etc.).
 
@@ -22,11 +22,11 @@ A drop-in replacement for the Ollama API that uses LiteLLM in the backend to rou
    cd ollama-proxy
    ```
 
-2. Create a virtual environment and install dependencies:
+2. Create a virtual environment and install dependencies using uv:
    ```bash
-   python -m venv venv
+   uv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -r requirements.txt
+   uv pip install -r requirements.txt
    ```
 
 3. Create a `.env` file from the template:
