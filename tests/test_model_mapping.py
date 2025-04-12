@@ -1,7 +1,6 @@
 """
 Tests for the model mapping functionality.
 """
-import pytest
 import sys
 import os
 
