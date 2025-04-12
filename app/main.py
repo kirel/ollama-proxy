@@ -354,7 +354,7 @@ async def show_model(request: ShowModelRequest): # Changed signature to use requ
         # The 'verbose' parameter should ideally return more detailed info if True
         return ShowModelResponse(
             license="MIT",
-            modelfile=f"FROM {model}\n",
+            modelfile=f"FROM {request.model}\n", # Use request.model here
             parameters="default parameters",
             template="{{ .Prompt }}",
             details=ModelDetails(
