@@ -97,11 +97,13 @@ def test_embeddings(ollama_client):
     """Test that the client can generate embeddings through our proxy."""
     response = ollama_client.embeddings(
         model="mxbai-embed-large",
-        prompt="Hello, world!"
+        prompt="Hello, world!" # ollama client uses 'prompt', maps to 'input'
     )
-    assert "embedding" in response
-    assert isinstance(response["embedding"], list)
-    assert len(response["embedding"]) > 0
+    assert "embeddings" in response # API response uses plural 'embeddings'
+    assert isinstance(response["embeddings"], list)
+    assert len(response["embeddings"]) > 0 # Should be a list containing one embedding list
+    assert isinstance(response["embeddings"][0], list) # Check inner list
+    assert len(response["embeddings"][0]) > 0 # Check that the embedding vector has dimension
 
 
 def test_show_model(ollama_client):
