@@ -131,10 +131,9 @@ def test_chat_endpoint(mock_acompletion, test_client): # Rename mock arg
         "messages": [
             {"role": "user", "content": "Hello, how are you?"}
         ],
-        "stream": False
+        "stream": False # Explicitly disable streaming for this test
     }
     response = test_client.post("/api/chat", json=request_data)
-    
     # Verify response
     assert response.status_code == 200
     assert "model" in response.json()

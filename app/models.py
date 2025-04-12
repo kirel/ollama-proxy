@@ -55,7 +55,7 @@ class ChatRequest(BaseModel):
     model: str
     messages: List[ChatMessage]
     tools: Optional[List[Dict[str, Any]]] = None # List of tools
-    stream: Optional[bool] = False
+    stream: Optional[bool] = True # Default to streaming
     options: Optional[Dict[str, Any]] = Field(default_factory=dict)
     format: Optional[str] = None # Can be "json" or a JSON schema dict
     keep_alive: Optional[str] = None # E.g., "5m"

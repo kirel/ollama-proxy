@@ -65,7 +65,8 @@ def test_chat(ollama_client):
         model="llama3",
         messages=[
             {"role": "user", "content": "Hello, how are you?"}
-        ]
+        ],
+        stream=False # Explicitly disable streaming
     )
     assert "message" in response
     assert "content" in response["message"]
@@ -83,7 +84,8 @@ def test_chat_with_history(ollama_client):
     ]
     response = ollama_client.chat(
         model="llama3",
-        messages=messages
+        messages=messages,
+        stream=False # Explicitly disable streaming
     )
     assert "message" in response
     assert "content" in response["message"]
@@ -130,7 +132,8 @@ async def test_async_chat(async_ollama_client):
         model="llama3",
         messages=[
             {"role": "user", "content": "Tell me about the Python programming language."}
-        ]
+        ],
+        stream=False # Explicitly disable streaming
     )
     assert "message" in response
     assert "content" in response["message"]
