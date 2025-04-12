@@ -31,19 +31,23 @@ def ollama_client():
     return client
 
 
-@pytest.fixture
-async def async_ollama_client():
+@pytest.fixture # Remove async def
+def async_ollama_client():
     """Create an async ollama client connected to our proxy."""
     client = AsyncClient(host=OLLAMA_HOST)
-    return client
+    return client # Return the client instance directly
 
 
 def test_list_models(ollama_client):
     """Test that the client can list models through our proxy."""
-    models = ollama_client.list()
-    assert "models" in models
-    assert len(models["models"]) > 0
-    assert "name" in models["models"][0]
+    response_dict = ollama_client.list()
+    assert "models" in response_dict
+    assert isinstance(response_dict["models"], list)
+    assert len(response_dict["models"]) > 0
+    # The client returns Model objects, access attributes directly
+    first_model = response_dict["models"][0]
+    assert hasattr(first_model, 'model')
+    assert isinstance(first_model.model, str)
 
 
 def test_generate(ollama_client):
@@ -170,13 +174,18 @@ async def test_streaming_chat(async_ollama_client):
 
 def test_unsupported_endpoints(ollama_client):
     """Test that unsupported endpoints return appropriate errors."""
-    # Test create model (should fail with 501)
+    # Test create model (should fail with 501 from the proxy)
+    # Note: The ollama client's create method expects 'path' or 'modelfile' content directly.
+    # We test by passing modelfile content. The client might raise its own error first
+    # if the format is wrong, but we primarily expect the proxy's 501.
     with pytest.raises(Exception) as excinfo:
+         # Pass modelfile content directly as per ollama client usage
         ollama_client.create(
             model="test-model",
-            modelfile="FROM llama3\nSYSTEM You are a helpful assistant."
+            modelfile="FROM llama3\nSYSTEM You are a helpful assistant." # Correct usage
         )
-    assert "501" in str(excinfo.value)
+    # Check for the proxy's 501 error within the ResponseError from the client
+    assert "501" in str(excinfo.value) or "Creating models from Modelfiles is not supported" in str(excinfo.value)
     
     # Test pull model (should fail with 501)
     with pytest.raises(Exception) as excinfo:

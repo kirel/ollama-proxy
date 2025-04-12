@@ -79,10 +79,10 @@ def map_to_litellm_model(model_name: str) -> str:
         logger.info(f"Mapped convenience model '{model_name}' to '{mapped_name}'")
         return mapped_name
 
-    # If no '/' and no specific mapping, apply the default 'ollama/' prefix
-    default_mapped_name = MODEL_MAPPING["default"](model_name)
-    logger.info(f"Applying default mapping for '{model_name}' to '{default_mapped_name}'")
-    return default_mapped_name
+    # If no '/' and no specific mapping, assume it's a direct Ollama model name.
+    # Do NOT apply the 'ollama/' prefix here, let LiteLLM handle it based on its provider detection.
+    logger.info(f"No specific mapping found for '{model_name}'. Using it directly for LiteLLM.")
+    return model_name
 
 def convert_chat_to_litellm_format(messages: List[ChatMessage]) -> List[Dict[str, str]]:
     """Convert Ollama chat messages to LiteLLM format."""
