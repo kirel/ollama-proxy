@@ -185,6 +185,7 @@ def test_embed_endpoint(mock_embedding, test_client): # Renamed test function
     # Verify litellm was called correctly
     mock_embedding.assert_called_once()
     args, kwargs = mock_embedding.call_args
-    assert kwargs["model"] == "ollama/mxbai-embed-large"
+    # The model mapping now passes the name directly without the 'ollama/' prefix
+    assert kwargs["model"] == "mxbai-embed-large"
     # LiteLLM embedding expects a list, even for single input
     assert kwargs["input"] == ["Hello, world!"]

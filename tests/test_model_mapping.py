@@ -27,11 +27,11 @@ def test_exact_model_mapping():
 
 def test_default_model_mapping():
     """Test mapping for models that don't have a specific mapping."""
-    # Test with a model that doesn't have a specific mapping
-    assert map_to_litellm_model("unknown-model") == "ollama/unknown-model"
-    
-    # Test with a model name containing special characters
-    assert map_to_litellm_model("custom_model-123") == "ollama/custom_model-123"
+    # Test with a model that doesn't have a specific mapping (should pass through)
+    assert map_to_litellm_model("unknown-model") == "unknown-model"
+
+    # Test with a model name containing special characters (should pass through)
+    assert map_to_litellm_model("custom_model-123") == "custom_model-123"
 
 
 def test_complex_model_names():
@@ -40,5 +40,5 @@ def test_complex_model_names():
     assert map_to_litellm_model("username/custom-model") == "username/custom-model"
     assert map_to_litellm_model("anthropic/claude-3.5-sonnet-20240620") == "anthropic/claude-3.5-sonnet-20240620"
 
-    # Test with a model name containing multiple colons (should use default mapping as no '/' and no specific map)
-    assert map_to_litellm_model("model:tag:subtag") == "ollama/model:tag:subtag"
+    # Test with a model name containing multiple colons (should pass through as no '/' and no specific map)
+    assert map_to_litellm_model("model:tag:subtag") == "model:tag:subtag"
