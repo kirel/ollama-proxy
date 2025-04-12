@@ -46,8 +46,8 @@ def configure_litellm():
     # You can add your API keys directly or via environment variables
     # LiteLLM will pick up environment variables like OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.
     
-    # Set default fallback provider if needed
-    litellm.set_verbose(LITELLM_CONFIG.get("verbose", False))
+    # Set verbosity level
+    litellm.verbose = LITELLM_CONFIG.get("verbose", False)
     
     # Apply any other configuration from LITELLM_CONFIG
     for key, value in LITELLM_CONFIG.items():
