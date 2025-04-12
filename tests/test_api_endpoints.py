@@ -4,7 +4,6 @@ Test the main API endpoints of the Ollama API proxy.
 import pytest
 import json
 from unittest.mock import MagicMock, patch
-import litellm
 from datetime import datetime
 
 
