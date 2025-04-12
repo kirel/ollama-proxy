@@ -60,8 +60,13 @@ def test_ps_endpoint(test_client): # Renamed test function
 ])
 def test_unsupported_endpoints_post(test_client, endpoint):
     """Test unsupported POST endpoints."""
-    # Use 'name' field as expected by the updated Pydantic models
-    response = test_client.post(endpoint, json={"name": "test"})
+    # Determine the correct request body based on the endpoint
+    if endpoint == "/api/copy":
+        request_body = {"source": "test-src", "destination": "test-dest"}
+    else: # /api/create, /api/pull, /api/push expect 'name'
+        request_body = {"name": "test"}
+
+    response = test_client.post(endpoint, json=request_body)
     assert response.status_code == 501
     assert "detail" in response.json()
 
