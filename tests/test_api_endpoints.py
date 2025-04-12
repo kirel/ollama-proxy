@@ -43,13 +43,12 @@ def test_show_model_endpoint(test_client):
     assert model_name in response.json()["modelfile"]
 
 
-def test_status_endpoint(test_client):
-    """Test the status endpoint."""
-    response = test_client.get("/api/status")
+def test_ps_endpoint(test_client): # Renamed test function
+    """Test the ps endpoint (formerly status)."""
+    response = test_client.get("/api/ps") # Updated path
     assert response.status_code == 200
-    assert "status" in response.json()
-    assert "running" in response.json()
-    assert response.json()["status"] == "ok"
+    assert "models" in response.json() # Updated assertion for PsResponse
+    assert isinstance(response.json()["models"], list) # Updated assertion
 
 
 @pytest.mark.parametrize("endpoint", [
@@ -155,26 +154,33 @@ def test_chat_endpoint(mock_completion, test_client):
 
 
 @patch('app.main.litellm.embedding')
-def test_embeddings_endpoint(mock_embedding, test_client):
-    """Test the embeddings endpoint."""
+def test_embed_endpoint(mock_embedding, test_client): # Renamed test function
+    """Test the embed endpoint (formerly embeddings)."""
     # Mock litellm embedding response
     mock_response = MagicMock()
+    mock_response.model = "ollama/mxbai-embed-large" # LiteLLM response includes model
     mock_response.data = [MagicMock()]
     mock_response.data[0].embedding = [0.1, 0.2, 0.3, 0.4, 0.5]
+    # Add mock usage data if needed by the response model (total_duration, etc.)
+    mock_response.usage = MagicMock()
+    mock_response.usage.prompt_tokens = 5 # Example value
     mock_embedding.return_value = mock_response
 
-    # Make a request to embeddings endpoint
+    # Make a request to embed endpoint
     request_data = {
         "model": "mxbai-embed-large",
-        "prompt": "Hello, world!"
+        "input": "Hello, world!" # Changed from prompt to input
     }
-    response = test_client.post("/api/embeddings", json=request_data)
-    
+    response = test_client.post("/api/embed", json=request_data) # Updated path
+
     # Verify response
     assert response.status_code == 200
-    assert "embedding" in response.json()
-    assert isinstance(response.json()["embedding"], list)
-    assert len(response.json()["embedding"]) == 5
+    assert "model" in response.json() # Check for model field
+    assert "embeddings" in response.json() # Changed from embedding to embeddings
+    assert isinstance(response.json()["embeddings"], list)
+    assert isinstance(response.json()["embeddings"][0], list) # It's a list of lists
+    assert len(response.json()["embeddings"][0]) == 5
+    assert response.json()["model"] == "mxbai-embed-large" # Check model name in response
 
     # Verify litellm was called correctly
     mock_embedding.assert_called_once()
