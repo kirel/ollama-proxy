@@ -65,9 +65,15 @@ def test_unsupported_endpoints_post(test_client, endpoint):
     assert "detail" in response.json()
 
 
+import json
+
 def test_unsupported_endpoint_delete(test_client):
     """Test unsupported DELETE endpoint."""
-    response = test_client.delete("/api/delete", json={"model": "test"})
+    response = test_client.delete(
+        "/api/delete",
+        data=json.dumps({"model": "test"}),
+        headers={"Content-Type": "application/json"}
+    )
     assert response.status_code == 501
     assert "detail" in response.json()
 
