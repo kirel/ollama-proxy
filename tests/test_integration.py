@@ -11,10 +11,7 @@ To run these tests:
 3. Run: pytest tests/test_integration.py -v
 """
 import pytest
-import ollama
 import os
-import time
-import asyncio
 from ollama import Client, AsyncClient
 
 # Set this to the address of your Ollama API proxy
