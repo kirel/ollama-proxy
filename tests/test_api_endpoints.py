@@ -77,8 +77,8 @@ def test_unsupported_endpoint_delete(test_client):
     assert "detail" in response.json()
 
 
-@patch('app.main.litellm.completion')
-def test_generate_endpoint(mock_completion, test_client):
+@patch('app.main.litellm.acompletion') # Target acompletion
+def test_generate_endpoint(mock_acompletion, test_client): # Rename mock arg
     """Test the generate endpoint."""
     # Mock litellm completion response
     mock_response = MagicMock()
