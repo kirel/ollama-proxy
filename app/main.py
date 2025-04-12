@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import litellm
@@ -102,8 +102,14 @@ async def stream_generator(stream):
 
 # API Routes
 @app.get("/")
-async def root():
+async def root_get():
+    """Handle GET requests to the root path."""
     return {"message": "Ollama API compatibility layer using LiteLLM"}
+
+@app.head("/")
+async def root_head():
+    """Handle HEAD requests to the root path for health checks."""
+    return Response(status_code=200)
 
 @app.post("/api/generate", response_model=GenerateResponse)
 async def generate(request: GenerateRequest):
