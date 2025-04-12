@@ -2,6 +2,10 @@
 
 A drop-in replacement for the Ollama API that uses LiteLLM in the backend to route requests to various LLM providers (OpenAI, Anthropic, etc.).
 
+- Ensure https://github.com/ollama/ollama/blob/main/docs/api.md is fully supported
+- Use litellm in the backend: https://docs.litellm.ai/docs/#basic-usage
+- Optional tracing with langfuse https://docs.litellm.ai/docs/observability/langfuse_integration
+
 ## Features
 
 - Ollama API-compatible endpoints
@@ -26,7 +30,7 @@ A drop-in replacement for the Ollama API that uses LiteLLM in the backend to rou
    ```bash
    uv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   uv pip install -r requirements.txt
+   uv pip install -r requirements.txt # ai! should be uv 
    ```
 
 3. Create a `.env` file from the template:
@@ -79,7 +83,7 @@ The service maps Ollama model names to the appropriate LiteLLM model names. You 
 
 ## Development
 
-   aider-google-free --yes-always --auto-test --test-cmd "uv run pytest" --notifications 
+   aider-google-free --yes-always --auto-test --test-cmd "uv run pytest" --auto-lint --lint-cmd "uv run ruff check --fix" --notifications 
 
 ## License
 
