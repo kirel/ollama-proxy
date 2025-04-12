@@ -227,7 +227,7 @@ async def generate(request: GenerateRequest):
         
         # Handle streaming
         if request.stream:
-            stream = litellm.completion(
+            stream = await litellm.acompletion( # Use acompletion
                 model=model,
                 messages=messages,
                 stream=True,
@@ -238,7 +238,7 @@ async def generate(request: GenerateRequest):
                 media_type="text/event-stream"
             )
         # Non-streaming response
-        response = litellm.completion(
+        response = await litellm.acompletion( # Use acompletion
             model=model,
             messages=messages,
             **params
@@ -301,7 +301,7 @@ async def chat(request: ChatRequest):
         
         # Handle streaming
         if request.stream:
-            stream = litellm.completion(
+            stream = await litellm.acompletion( # Use acompletion
                 model=model,
                 messages=messages,
                 stream=True,

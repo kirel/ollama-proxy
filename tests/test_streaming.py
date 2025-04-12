@@ -5,8 +5,8 @@ import json
 from unittest.mock import MagicMock, patch
 
 
-@patch('app.main.litellm.completion')
-def test_generate_streaming(mock_completion, test_client):
+@patch('app.main.litellm.acompletion') # Target acompletion
+def test_generate_streaming(mock_acompletion, test_client): # Rename mock arg
     """Test the generate endpoint with streaming."""
     # Create a mock for the streaming response
     class MockStreamingResponse:
@@ -34,7 +34,7 @@ def test_generate_streaming(mock_completion, test_client):
             return chunk
     
     # Set up the mock to return our streaming response
-    mock_completion.return_value = MockStreamingResponse()
+    mock_acompletion.return_value = MockStreamingResponse() # Use renamed mock arg
     
     # Make a request to generate endpoint with streaming
     request_data = {
@@ -92,8 +92,8 @@ def test_generate_streaming(mock_completion, test_client):
     assert "total_duration" in final_chunk_data
 
 
-@patch('app.main.litellm.completion')
-def test_chat_streaming(mock_completion, test_client):
+@patch('app.main.litellm.acompletion') # Target acompletion
+def test_chat_streaming(mock_acompletion, test_client): # Rename mock arg
     """Test the chat endpoint with streaming."""
     # Create a mock for the streaming response
     class MockStreamingResponse:
@@ -121,7 +121,7 @@ def test_chat_streaming(mock_completion, test_client):
             return chunk
     
     # Set up the mock to return our streaming response
-    mock_completion.return_value = MockStreamingResponse()
+    mock_acompletion.return_value = MockStreamingResponse() # Use renamed mock arg
     
     # Make a request to chat endpoint with streaming
     request_data = {
