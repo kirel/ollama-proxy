@@ -273,6 +273,7 @@ async def chat(request: ChatRequest):
     try:
         model = map_to_litellm_model(request.model)
         logger.info(f"Generating chat completion with model: {model}")
+        logger.info(f"Chat request stream parameter: {request.stream}") # Add logging
 
         # Handle Ollama's model loading behavior when messages list is empty
         if not request.messages:
