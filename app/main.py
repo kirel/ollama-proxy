@@ -5,6 +5,7 @@ import litellm
 import json
 import logging
 from typing import List, Dict
+from datetime import datetime # Import datetime
 import uvicorn
 from dotenv import load_dotenv
 from app.config import MODEL_MAPPING, LITELLM_CONFIG
@@ -156,9 +157,10 @@ async def generate(request: GenerateRequest):
         content = response.choices[0].message.content
         
         # Map response to Ollama format
+        created_time = datetime.fromtimestamp(response.created).isoformat() + "Z"
         return GenerateResponse(
             model=request.model,
-            created_at=str(response.created),
+            created_at=created_time, # Format timestamp
             response=content,
             done=True,
             context=[],  # Ollama returns context here, but we don't have an equivalent
@@ -217,9 +219,10 @@ async def chat(request: ChatRequest):
         content = response.choices[0].message.content
         
         # Map response to Ollama format
+        created_time = datetime.fromtimestamp(response.created).isoformat() + "Z"
         return ChatResponse(
             model=request.model,
-            created_at=str(response.created),
+            created_at=created_time, # Format timestamp
             message=ChatMessage(
                 role="assistant",
                 content=content
