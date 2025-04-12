@@ -82,7 +82,7 @@ def convert_chat_to_litellm_format(messages: List[ChatMessage]) -> List[Dict[str
 
 async def stream_generator(stream):
     """Generate streaming responses in Ollama format."""
-    for chunk in stream:
+    async for chunk in stream:
         if hasattr(chunk, "choices") and len(chunk.choices) > 0:
             choice = chunk.choices[0]
             if hasattr(choice, "delta") and hasattr(choice.delta, "content"):
