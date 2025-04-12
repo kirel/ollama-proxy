@@ -509,15 +509,6 @@ async def create_model(request_data: CreateModelRequest): # Changed signature to
         logger.error(f"Error in create model endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-from app.models import (
-    GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
-    ListTagsResponse, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
-    ShowModelResponse, ShowModelRequest, PsResponse, CreateModelRequest, # Added VersionResponse and CreateModelRequest
-    CopyModelRequest, DeleteModelRequest, PullModelRequest, PushModelRequest # Added stub request models
-)
-
-# ... (rest of imports and code) ...
-
 # Copy model stub
 @app.post("/api/copy")
 async def copy_model(request_data: CopyModelRequest): # Use specific model
