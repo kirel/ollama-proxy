@@ -21,3 +21,13 @@ package = false
 dev = [
     "ruff>=0.11.5",
 ]
+
+[tool.ruff]
+# Add any top-level ruff settings here if needed
+
+[tool.ruff.lint]
+# Exclude markdown files from linting
+exclude = ["*.md"]
+# Add specific rules to select or ignore if needed, e.g.:
+# select = ["E", "F", "W", "I"]
+# ignore = []
