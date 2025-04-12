@@ -231,13 +231,14 @@ async def chat(request: ChatRequest):
         logger.error(f"Error in chat: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/models", response_model=ListModelsResponse)
+@app.get("/api/models", response_model=ListTagsResponse) # Renamed from ListModelsResponse
 async def list_models():
     """List available models (mimicking Ollama's /api/models endpoint)"""
+    # Note: Ollama spec uses /api/tags for this. We might want to align later.
     try:
         # In a real implementation, you'd return available models from LiteLLM
         # For now, we'll return a placeholder response with sample models
-        return ListModelsResponse(
+        return ListTagsResponse( # Renamed from ListModelsResponse
             models=[
                 ModelInfo(
                     name="llama3",
@@ -350,19 +351,18 @@ async def show_model(model: str):
         logger.error(f"Error showing model information: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Status endpoint
-@app.get("/api/status", response_model=StatusResponse)
-async def status():
-    """Show running models and metadata"""
+# Status endpoint (Ollama spec uses /api/ps)
+@app.get("/api/ps", response_model=PsResponse) # Changed path and response model
+async def ps(): # Renamed function
+    """List running models (Ollama's /api/ps endpoint)"""
     try:
-        # In a real implementation, we would get this from LiteLLM
-        return StatusResponse(
-            status="ok",
-            running=[],  # This would be populated with actual running models
-            duration=0   # Time in nanoseconds
+        # In a real implementation, we would get this from LiteLLM or manage state
+        # Returning an empty list for now
+        return PsResponse(
+            models=[]
         )
     except Exception as e:
-        logger.error(f"Error getting status: {str(e)}")
+        logger.error(f"Error getting running models: {str(e)}") # Updated log message
         raise HTTPException(status_code=500, detail=str(e))
 
 # ----- Model Management Endpoints (Stubs) -----
