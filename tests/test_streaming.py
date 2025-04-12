@@ -59,7 +59,8 @@ def test_generate_streaming(mock_completion, test_client):
     final_chunk_data = None
     intermediate_chunks = []
     for chunk_str in chunks:
-        if not chunk_str: continue # Skip potential empty lines
+        if not chunk_str:
+            continue # Skip potential empty lines
 
         data = json.loads(chunk_str)
         if data.get("done") is True:
@@ -147,7 +148,8 @@ def test_chat_streaming(mock_completion, test_client):
     final_chunk_data = None
     intermediate_chunks = []
     for chunk_str in chunks:
-        if not chunk_str: continue # Skip potential empty lines
+        if not chunk_str:
+            continue # Skip potential empty lines
 
         data = json.loads(chunk_str)
         if data.get("done") is True:
