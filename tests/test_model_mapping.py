@@ -52,8 +52,8 @@ def test_default_model_mapping():
 
 def test_complex_model_names():
     """Test mapping for more complex model names."""
-    # Test with a model name containing a namespace
-    assert map_to_litellm_model("username/custom-model") == "ollama/username/custom-model"
-    
-    # Test with a model name containing multiple colons
+    # Test with a model name containing a namespace (should be passed directly)
+    assert map_to_litellm_model("username/custom-model") == "username/custom-model"
+
+    # Test with a model name containing multiple colons (should use default mapping)
     assert map_to_litellm_model("model:tag:subtag") == "ollama/model:tag:subtag"
