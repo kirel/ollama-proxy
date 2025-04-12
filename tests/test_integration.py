@@ -197,13 +197,13 @@ def test_unsupported_endpoints(ollama_client):
     # We test by passing modelfile content. The client might raise its own error first
     # if the format is wrong, but we primarily expect the proxy's 501.
     with pytest.raises(Exception) as excinfo:
-        # Pass modelfile content as the second positional argument (modelfile)
+        # Pass model name and modelfile content using the correct keyword argument
         ollama_client.create(
-            "test-model", # First arg is model name
-            modelfile="FROM qwen2:0.5b\nSYSTEM You are a helpful assistant." # Second arg is modelfile content
+            model="test-model",
+            modelfile="FROM qwen2:0.5b\nSYSTEM You are a helpful assistant."
         )
     # Check for the proxy's 501 error OR the client's ResponseError containing 501
-    # The client might raise ResponseError(status_code=501) or its own validation error first.
+    # The client should now attempt the request, and the proxy should return 501.
     assert "501" in str(excinfo.value) or "Creating models from Modelfiles is not supported" in str(excinfo.value)
     
     # Test pull model (should fail with 501)
