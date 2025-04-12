@@ -10,8 +10,10 @@ from dotenv import load_dotenv
 from app.config import MODEL_MAPPING, LITELLM_CONFIG
 from app.models import (
     GenerateRequest, GenerateResponse, ChatMessage, ChatRequest, ChatResponse,
-    ModelInfo, ModelDetails, EmbeddingRequest, EmbeddingResponse,
-    ShowModelResponse
+    ModelInfo, ListTagsResponse, ModelDetails, EmbeddingRequest, EmbeddingResponse, # Added ListTagsResponse
+    ShowModelResponse, ShowModelRequest, PsResponse, PsModelInfo, # Added ShowModelRequest, PsResponse, PsModelInfo
+    CreateModelRequest, CopyModelRequest, DeleteModelRequest, PullModelRequest, PushModelRequest, # Added stub models
+    VersionResponse # Added VersionResponse
 )
 
 # Load environment variables
