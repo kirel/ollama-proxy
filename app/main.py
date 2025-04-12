@@ -63,38 +63,26 @@ configure_litellm()
 
 # Helper functions
 def map_to_litellm_model(model_name: str) -> str:
-    """Map Ollama model names to LiteLLM compatible model names."""
-    # Check exact match in mapping FIRST
-    if model_name in MODEL_MAPPING:
-        mapped_name = MODEL_MAPPING[model_name]
-        # Handle the default lambda case separately
-        if callable(mapped_name):
-             # If it's the default lambda, apply it only if no '/' is present
-             if "/" not in model_name:
-                 result = mapped_name(model_name)
-                 logger.info(f"Applied default mapping for '{model_name}' to '{result}'")
-                 return result
-             # Otherwise, fall through to check for '/' or use default mapping below
-        else:
-            # It's a direct string mapping
-            logger.info(f"Mapped model '{model_name}' to '{mapped_name}'")
-            return mapped_name
-
-    # If no exact match, check if the model name already contains a '/', assume it's a direct LiteLLM model string
+    """
+    Map Ollama model names to LiteLLM compatible model names.
+    If the name contains '/', pass it directly.
+    Otherwise, check for convenience mappings or apply the default 'ollama/' prefix.
+    """
+    # If the model name already contains a '/', assume it's a direct LiteLLM model string
     if "/" in model_name:
-        logger.info(f"Using model name directly (no exact mapping found): {model_name}")
+        logger.info(f"Using model name directly: {model_name}")
         return model_name
 
-    # Check if there's a prefix match (e.g., llama3:8b -> ollama/llama3:8b)
-    # This might be less useful if prefixes are explicitly in MODEL_MAPPING
-    # Note: This logic might be less relevant now if MODEL_MAPPING covers prefixes explicitly
-    for prefix, litellm_name in MODEL_MAPPING.items():
-        if model_name.startswith(prefix + ":"):
-            suffix = model_name[len(prefix):]
-            return litellm_name + suffix
-    
-    # Use default mapping
-    return MODEL_MAPPING["default"](model_name)
+    # If no '/', check for an exact convenience mapping (excluding the default lambda)
+    if model_name in MODEL_MAPPING and not callable(MODEL_MAPPING[model_name]):
+        mapped_name = MODEL_MAPPING[model_name]
+        logger.info(f"Mapped convenience model '{model_name}' to '{mapped_name}'")
+        return mapped_name
+
+    # If no '/' and no specific mapping, apply the default 'ollama/' prefix
+    default_mapped_name = MODEL_MAPPING["default"](model_name)
+    logger.info(f"Applying default mapping for '{model_name}' to '{default_mapped_name}'")
+    return default_mapped_name
 
 def convert_chat_to_litellm_format(messages: List[ChatMessage]) -> List[Dict[str, str]]:
     """Convert Ollama chat messages to LiteLLM format."""
