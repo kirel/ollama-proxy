@@ -12,7 +12,7 @@ To run these tests:
 """
 import pytest
 import os
-# Removed tempfile import as it's no longer needed
+import tempfile # Re-add tempfile import
 from ollama import Client, AsyncClient
 
 # Set this to the address of your Ollama API proxy
@@ -195,11 +195,13 @@ def test_unsupported_endpoints(ollama_client):
     """Test that unsupported endpoints return appropriate errors."""
     # Test create model (should fail with 501 from the proxy)
     modelfile_content = "FROM qwen2:0.5b\nSYSTEM You are a helpful assistant."
-    with pytest.raises(Exception) as excinfo:
-        # Pass model name positionally and modelfile content via keyword argument
-        ollama_client.create("test-model", modelfile=modelfile_content)
+    with pytest.raises(Exception) as excinfo, tempfile.NamedTemporaryFile(mode='w+', delete=True) as temp_modelfile:
+        temp_modelfile.write(modelfile_content)
+        temp_modelfile.flush() # Ensure content is written to disk
+        # Call create using the path keyword argument
+        ollama_client.create(model="test-model", path=temp_modelfile.name)
     # Check for the proxy's 501 error OR the client's ResponseError containing 501
-    # The client should now attempt the request, FastAPI should validate against CreateModelRequest,
+    # The client should now attempt the request via path, FastAPI should validate,
     # and the proxy stub should return 501.
     assert "501" in str(excinfo.value) or "Creating models from Modelfiles is not supported" in str(excinfo.value)
 
