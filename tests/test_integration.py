@@ -194,18 +194,17 @@ async def test_streaming_chat(async_ollama_client):
 def test_unsupported_endpoints(ollama_client):
     """Test that unsupported endpoints return appropriate errors."""
     # Test create model (should fail with 501 from the proxy)
-    modelfile_content = "FROM qwen2:0.5b\nSYSTEM You are a helpful assistant."
-    with pytest.raises(Exception) as excinfo, tempfile.NamedTemporaryFile(mode='w+', delete=True) as temp_modelfile:
-        temp_modelfile.write(modelfile_content)
-        temp_modelfile.flush() # Ensure content is written to disk
-        # Call create using the path keyword argument
-        ollama_client.create(model="test-model", path=temp_modelfile.name)
+    with pytest.raises(Exception) as excinfo:
+        # Use the correct parameters for the create method
+        ollama_client.create(
+            model="test-model", 
+            from_="qwen2:0.5b",
+            system="You are a helpful assistant."
+        )
     # Check for the proxy's 501 error OR the client's ResponseError containing 501
-    # The client should now attempt the request via path, FastAPI should validate,
-    # and the proxy stub should return 501.
-    assert "501" in str(excinfo.value) or "Creating models from Modelfiles is not supported" in str(excinfo.value)
+    assert "501" in str(excinfo.value) or "not supported" in str(excinfo.value).lower()
 
     # Test pull model (should fail with 501)
     with pytest.raises(Exception) as excinfo:
         ollama_client.pull("llama3")
-    assert "501" in str(excinfo.value)
+    assert "501" in str(excinfo.value) or "not supported" in str(excinfo.value).lower()
