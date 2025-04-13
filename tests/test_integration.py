@@ -12,7 +12,6 @@ To run these tests:
 """
 import pytest
 import os
-import tempfile # Re-add tempfile import
 from ollama import Client, AsyncClient
 
 # Set this to the address of your Ollama API proxy
